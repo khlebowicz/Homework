@@ -34,14 +34,7 @@ namespace Homework.Service.Handlers
 				.Where(x => x.Id == request.PerformanceId)
 				.FirstOrDefaultAsync(cancellationToken);
 
-			//var data = await _dbContext.Performance
-			//	.Where(x => x.Id == request.PerformanceId)
-			//	.Include(b => b.Seats)
-			//	.Select(s => s.Seats)
-			//	.Select(s=>s.Where(w=>!(w.Reservations.Any())))
-			//	.ToListAsync(cancellationToken);
-
-			return new SimpleResponse(performance?.Seats.Where(s => !s.Reservations.Any()));
+			return new SimpleResponse(performance?.Seats.Where(s => !s.Reservations.Any() || s.Reservations.Any(s => s.UntilWhen <= DateTime.Now) && !s.Reservations.Any(s=>s.UntilWhen == Invariants.DefaultSaleDate)));
 		}
 	}
 }

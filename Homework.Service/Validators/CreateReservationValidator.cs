@@ -29,8 +29,16 @@ namespace Homework.Service.Validators
                 .WithMessage(Invariants.Messages.PerformanceMustBePlanned);
 
             RuleFor(u => u)
+                .MustAsync(UserMustExists)
+                .WithMessage(Invariants.Messages.UserMustExists);
+
+            RuleFor(u => u)
                 .MustAsync(SeatNotBought)
-                .WithMessage(Invariants.Messages.SeatNotBought);
+                .WithMessage(Invariants.Messages.BoughtSeat);
+
+            RuleFor(u => u)
+                .MustAsync(SeatNotReserved)
+                .WithMessage(Invariants.Messages.ReservedSeat);
         }
 
         private async Task<bool> PerformanceMustBePlanned(CreateReservationCommand command, CancellationToken cancellation = new CancellationToken())
@@ -38,11 +46,30 @@ namespace Homework.Service.Validators
             return await _dbContext.Performance?.AnyAsync(s => s.Id == command.PerformanceId && s.Date > DateTime.Now);
         }
 
+        private async Task<bool> UserMustExists(CreateReservationCommand command, CancellationToken cancellation = new CancellationToken())
+        {
+            return await _dbContext.User?.AnyAsync(s => s.Id == command.UserId);
+        }
+
         private async Task<bool> SeatNotBought(CreateReservationCommand command, CancellationToken cancellation = new CancellationToken())
         {
             var seat = await _dbContext.Seat?.FirstOrDefaultAsync(s => s.Id == command.SeatId);
-            return !seat.Reservations.Any(s => s.UntilWhen == Invariants.DefaultLastDate);
+            return !seat.Reservations.Any(s => s.UntilWhen == Invariants.DefaultSaleDate);
         }
 
+        private async Task<bool> SeatNotReserved(CreateReservationCommand command, CancellationToken cancellation = new CancellationToken())
+        {
+            var seat = await _dbContext.Seat?.FirstOrDefaultAsync(s => s.Id == command.SeatId);
+            var user = await _dbContext.User?.FirstOrDefaultAsync(s => s.Id == command.UserId);
+            if (user.IsVip)
+            {
+                var vipUsers = await _dbContext.User.Where(w => w.IsVip).Select(s => s.Id).ToListAsync();
+                return !seat.Reservations.Any(s => s.UntilWhen < DateTime.Now && vipUsers.Contains(s.UserId));
+            }
+            else
+            {
+                return !seat.Reservations.Any(s => s.UntilWhen < DateTime.Now);
+            }
+        }
     }
 }

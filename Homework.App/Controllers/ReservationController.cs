@@ -39,26 +39,25 @@ namespace Homework.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            try
-            {
-                var response = await _mediator.Send(new CreateReservationCommand() { PerformanceId = new Guid("8bf0b988-f921-4ba3-9767-97376af2bfc1") });
-                // if (!response.IsValid)
-                //    return BadRequest(response.Errors);
-                // return Ok(response.Result);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> Get()
+        //{
+        //    try
+        //    {
+        //        var response = await _mediator.Send(new CreateReservationCommand() { PerformanceId = new Guid("8bf0b988-f921-4ba3-9767-97376af2bfc1") });
+        //        // if (!response.IsValid)
+        //        //    return BadRequest(response.Errors);
+        //        // return Ok(response.Result);
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
 
     }

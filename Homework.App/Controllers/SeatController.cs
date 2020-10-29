@@ -25,7 +25,7 @@ namespace Homework.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("getFreeSeatByPerformance/{performanceId}")]
+        [HttpGet("FreeByPerformance/{performanceId}")]
         public async Task<IActionResult> GetFreeSeatByPerformance(Guid performanceId)
         {
             try

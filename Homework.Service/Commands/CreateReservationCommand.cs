@@ -12,6 +12,6 @@ namespace Homework.Service.Commands
         public Guid PerformanceId { get; set; }
         public Guid SeatId { get; set; }
         public Guid UserId { get; set; }
-        public DateTime UntilWhen { get; set; }
+        // public DateTime UntilWhen { get; set; }
     }
 }
